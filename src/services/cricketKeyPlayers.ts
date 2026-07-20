@@ -1,0 +1,35 @@
+const teamKeyPlayers: Record<string, string[]> = {
+  India: ['Virat Kohli', 'Rohit Sharma', 'Jasprit Bumrah', 'Ravindra Jadeja'],
+  England: ['Joe Root', 'Ben Stokes', 'Jofra Archer', 'James Anderson'],
+  Australia: ['Steve Smith', 'Pat Cummins', 'Mitchell Starc', 'David Warner'],
+  'New Zealand': ['Kane Williamson', 'Tim Southee', 'Trent Boult', 'Tom Latham'],
+  'West Indies': ['Jason Holder', 'Kraigg Brathwaite', 'Nicholas Pooran', 'Alzarri Joseph'],
+  Pakistan: ['Babar Azam', 'Shaheen Afridi', 'Mohammad Rizwan', 'Shadab Khan'],
+  Bangladesh: ['Shakib Al Hasan', 'Mushfiqur Rahim', 'Taskin Ahmed', 'Litton Das'],
+  Zimbabwe: ['Sikandar Raza', 'Blessing Muzarabani', 'Craig Ervine', 'Sean Williams'],
+  'South Africa': ['Kagiso Rabada', 'Quinton de Kock', 'Anrich Nortje', 'Aiden Markram'],
+  'Sri Lanka': ['Kusal Mendis', 'Wanindu Hasaranga', 'Dushmantha Chameera', 'Pathum Nissanka'],
+  Afghanistan: ['Rashid Khan', 'Mohammad Nabi', 'Rahmanullah Gurbaz', 'Mujeeb Ur Rahman'],
+  Nepal: ['Rohit Paudel', 'Sandeep Lamichhane', 'Kushal Bhurtel', 'Dipendra Singh Airee'],
+  Namibia: ['Gerhard Erasmus', 'David Wiese', 'Ruben Trumpelmann', 'JJ Smit'],
+  Netherlands: ['Max O\'Dowd', 'Logan van Beek', 'Bas de Leede', 'Scott Edwards'],
+  Ireland: ['Paul Stirling', 'Josh Little', 'Andy Balbirnie', 'Curtis Campher'],
+  Scotland: ['Richie Berrington', 'Mark Watt', 'George Munsey', 'Safyaan Sharif'],
+  Oman: ['Zeeshan Maqsood', 'Aqib Ilyas', 'Bilal Khan', 'Naseem Khushi'],
+  'Papua New Guinea': ['Assad Vala', 'Norman Vanua', 'Kiplin Doriga', 'Sese Bau'],
+  Canada: ['Saad Bin Zafar', 'Nicholas Kirton', 'Dilon Heyliger', 'Ravinderpal Singh'],
+  Kenya: ['Rakep Patel', 'Collins Obuya', 'Shem Ngoche', 'Irfan Karim'],
+  Denmark: ['Hamid Shah', 'Surya Anand', 'Saif Ahmad', 'Amjad Khan'],
+  Hungary: ['Abhijeet Ahuja', 'Ali Yalmaz', 'Zeeshan Kukikhel', 'Harsh Mandhyan'],
+  Estonia: ['Arslan Amjad', 'Murali Nandi', 'Habib Khan', 'Steffan Hook'],
+  Turkey: ['Ilyas Ataullah', 'Ali Kaya', 'Gokhan Alta', 'Mehmet Esen'],
+  Serbia: ['Robin Vitas', 'Edward Pavlovic', 'Winton Mirosavljevic', 'Luka Woods'],
+  Belgium: ['Shaheryar Butt', 'Mamoon Latif', 'Fahim Bhatti', 'Saber Zakhil'],
+  Gibraltar: ['Balaji Avinash', 'James Fitzgerald', 'Kenroy Nestor', 'Samarth Bodha'],
+  Norway: ['Raza Iqbal', 'Usman Arif', 'Sher Sahak', 'Arfan Bhatti'],
+  Romania: ['Sivakumar Periaswamy', 'Ramesh Satheesan', 'Vasu Saini', 'Taranjeet Singh'],
+};
+
+export function getKeyPlayers(team: string): string[] {
+  return teamKeyPlayers[team] || [];
+}
