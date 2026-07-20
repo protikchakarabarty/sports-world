@@ -164,8 +164,8 @@ export function FootballOnThisDay({ gender = 'men' }: { gender?: Gender }) {
             transition={{ duration: 0.2 }}
           >
             <MatchCarousel>
-              {entries.map((player) => (
-                <PlayerCard key={player.id || `otd-player-${i}`} player={player} showBorn={showBorn} />
+              {entries.map((player, idx) => (
+                <PlayerCard key={player.id || `otd-player-${idx}`} player={player} showBorn={showBorn} />
               ))}
             </MatchCarousel>
           </motion.div>

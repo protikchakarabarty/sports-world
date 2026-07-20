@@ -366,6 +366,14 @@ export interface CompetitionInfo {
   area: string;
   emblem?: string;
   type?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface CompetitionGroup {
+  running: CompetitionInfo[];
+  upcoming: CompetitionInfo[];
 }
 
 export interface ScorerEntry {

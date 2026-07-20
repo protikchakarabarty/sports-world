@@ -94,7 +94,7 @@ export function CricketNewsSection({ gender = 'men' }: { gender?: Gender }) {
 
   const filtered = useMemo(() => {
     if (!articles) return [];
-    return articles.filter((a) => isCricketArticle(a.title, (a.description || a.excerpt || ''), gender));
+    return articles.filter((a) => isCricketArticle(a.title, (a.excerpt || ''), gender));
   }, [articles, gender]);
 
   if (isLoading) {
@@ -132,7 +132,7 @@ export function CricketNewsSection({ gender = 'men' }: { gender?: Gender }) {
     <Section title={t('Cricket News', 'ক্রিকেট খবর')} link="#">
       <MatchCarousel>
         {filtered.map((article, i) => {
-          const newsKey = article.id ?? article.url ?? article.title ?? `cricket-news-${i}`;
+          const newsKey = article.id ?? `news-${i}`;
           return (
             <article
               key={newsKey}

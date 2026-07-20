@@ -66,7 +66,7 @@ function FanPredictionCard({ match }: { match: { id: string; homeTeam: string; a
               const isUserVote = fan.userVote === opt.option;
               const canVote = !fan.hasVoted && !fan.closed && !fan.isVoting;
               const colors = barForOption(opt.option);
-              const pollOptionKey = opt.id ?? `${pollId}-${(opt.option || '').trim()}-${i}`;
+              const pollOptionKey = `${pollId}-${(opt.option || '').trim()}-${i}`;
               return (
                 <motion.button
                   key={pollOptionKey}

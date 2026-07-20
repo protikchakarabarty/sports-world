@@ -3,7 +3,7 @@ import { getWomenFixtures, getWomenCompetitions, detectWomenLeagueCode } from '@
 import type { AiMatchInfo } from '@/services/providers/sportmonksProvider';
 import { womenFootballDataProvider } from '@/services/providers/footballDataProvider';
 import { getWomenTable, getWomenTopScorers } from '@/services/footballApi';
-import type { StandingEntry, ScorerEntry, CompetitionInfo, FootballMatch } from '@/services/footballApi';
+import type { StandingEntry, ScorerEntry, CompetitionInfo, CompetitionGroup, FootballMatch } from '@/services/footballApi';
 import { getWomenFifaRankings } from '@/services/fifaRankingApi';
 import { getWomenClubRankings } from '@/services/clubRankingService';
 import { getWomenFootballNews } from '@/services/newsApi';
@@ -324,9 +324,9 @@ export function useWomenLeagues() {
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 120,
     queryKey: ['women-football-leagues'],
-    queryFn: async (): Promise<CompetitionInfo[]> => {
+    queryFn: async (): Promise<CompetitionGroup> => {
       const data = await getWomenCompetitions();
-      return data;
+      return { running: data, upcoming: [] };
     },
   });
 }
