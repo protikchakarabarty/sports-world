@@ -4,6 +4,14 @@ import type { AxiosInstance } from 'axios';
 import { fetchCricketDataMatches, fetchCricketDataSeries } from './cricketDataProvider';
 import { getUpcomingFixtures as getScheduledFixturesFromFile } from './upcomingFixtures';
 import { getUpcomingSeries as getScheduledSeriesFromFile } from './upcomingSeries';
+import {
+  getCachedResponse,
+  setCachedResponse,
+  getStaleResponse,
+  getInFlight,
+  setInFlight,
+  clearInFlight,
+} from './cricketApiCache';
 
 export interface TeamRankingEntry {
   rank: number;
@@ -240,10 +248,47 @@ function getClient(): AxiosInstance {
   return client;
 }
 
+const urlTtl: Record<string, number> = {
+  '/v2/live': 2 * 60 * 1000,
+  '/v2/fixtures': 5 * 60 * 1000,
+  '/v2/results': 10 * 60 * 1000,
+  '/v2/series': 30 * 60 * 1000,
+  '/v2/teams': 60 * 60 * 1000,
+  '/v2/rankings': 60 * 60 * 1000,
+  '/v2/team-rankings': 60 * 60 * 1000,
+};
+
+function ttlForUrl(url: string): number {
+  for (const [prefix, ttl] of Object.entries(urlTtl)) {
+    if (url.startsWith(prefix)) return ttl;
+  }
+  return 5 * 60 * 1000;
+}
+
+function cacheKeyForUrl(url: string): string {
+  const idx = url.indexOf('?');
+  return idx >= 0 ? url.slice(0, idx) : url;
+}
+
 const fullResponseLogged = new Set<string>();
 
 async function rateLimitedFetch<T>(url: string): Promise<T> {
-  const result = await new Promise<T>((resolve, reject) => {
+  const cKey = cacheKeyForUrl(url);
+  const ttl = ttlForUrl(url);
+
+  const cached = getCachedResponse<T>(cKey, ttl);
+  if (cached) {
+    console.log(`[CricketAPI] 🟡 Cache HIT ${url}`);
+    return cached;
+  }
+
+  const inFlight = getInFlight<T>(cKey);
+  if (inFlight) {
+    console.log(`[CricketAPI] 🔄 In-flight DEDUP ${url}`);
+    return inFlight;
+  }
+
+  const promise = new Promise<T>((resolve, reject) => {
     lastRequestChain = lastRequestChain.then(async () => {
       await new Promise((r) => setTimeout(r, MIN_REQUEST_INTERVAL));
       console.log(`[CricketAPI] ➡️ ${url}`);
@@ -256,17 +301,34 @@ async function rateLimitedFetch<T>(url: string): Promise<T> {
           fullResponseLogged.add(url);
           console.log(`[CricketAPI]    FULL RESPONSE: ${body}`);
         }
+        setCachedResponse(cKey, res.data, ttl);
         resolve(res.data);
       } catch (e: unknown) {
         const apiErr = e as ApiError;
         const status = apiErr.status ?? (e as { response?: { status: number } }).response?.status ?? 0;
         const msg = apiErr.message ?? '';
         console.error(`[CricketAPI] ❌ ${status} ${url} | ${msg}`);
+
+        if (status === 429) {
+          console.warn(`[CricketAPI] ⚠️ 429 RATE LIMITED ${url} — returning stale cache if available`);
+          const stale = getStaleResponse<T>(cKey);
+          if (stale) {
+            console.log(`[CricketAPI] 🟠 Stale cache OK ${url}`);
+            resolve(stale);
+            return;
+          }
+          console.error(`[CricketAPI] ❌ No stale cache for ${url}`);
+        }
+
         reject(e);
+      } finally {
+        clearInFlight(cKey);
       }
     });
   });
-  return result;
+
+  setInFlight<T>(cKey, promise);
+  return promise;
 }
 
 function extractArray<T>(data: unknown, key: string): T[] {
